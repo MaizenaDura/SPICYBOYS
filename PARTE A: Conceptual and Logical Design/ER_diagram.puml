@@ -1,0 +1,126 @@
+@startuml
+
+entity User {
+    *user_id : INT <<PK>>
+    --
+    full_name : VARCHAR
+    age : INT
+    gender : VARCHAR
+    experience_level : VARCHAR
+    consent_signed : BOOLEAN
+}
+
+entity Player {
+    *player_id : INT <<PK>>
+    --
+    user_id : INT <<FK>>
+    nickname : VARCHAR
+}
+
+entity Episode {
+    *episode_id : INT <<PK>>
+    --
+    episode_name : VARCHAR
+}
+
+entity Map {
+    *map_id : INT <<PK>>
+    --
+    episode_id : INT <<FK>>
+    map_code : VARCHAR
+    map_name : VARCHAR
+}
+
+entity Sector {
+    *sector_id : INT <<PK>>
+    --
+    map_id : INT <<FK>>
+    sector_name : VARCHAR
+}
+
+entity Game {
+    *game_id : INT <<PK>>
+    --
+    episode_id : INT <<FK>>
+    start_time : TIMESTAMP
+    end_time : TIMESTAMP
+    difficulty : VARCHAR
+}
+
+entity GameParticipant {
+    *game_id : INT <<PK,FK>>
+    *player_id : INT <<PK,FK>>
+}
+
+entity TelemetryEvent {
+    *telemetry_id : INT <<PK>>
+    --
+    game_id : INT <<FK>>
+    player_id : INT <<FK>>
+    sector_id : INT <<FK>>
+    tic : INT
+    event_time : TIMESTAMP
+    pos_x : FLOAT
+    pos_y : FLOAT
+    pos_z : FLOAT
+    angle : FLOAT
+    fov : FLOAT
+    momentum_x : FLOAT
+    momentum_y : FLOAT
+    momentum_z : FLOAT
+    health : INT
+    armor : INT
+    ammo : INT
+}
+
+entity UXInstrument {
+    *instrument_id : INT <<PK>>
+    --
+    instrument_name : VARCHAR
+}
+
+entity UXItem {
+    *item_id : INT <<PK>>
+    --
+    instrument_id : INT <<FK>>
+    question_text : TEXT
+}
+
+entity UXResponse {
+    *response_id : INT <<PK>>
+    --
+    user_id : INT <<FK>>
+    instrument_id : INT <<FK>>
+    response_date : DATE
+}
+
+entity UXResponseItem {
+    *response_id : INT <<PK,FK>>
+    *item_id : INT <<PK,FK>>
+    --
+    score : INT
+}
+
+User ||--o{ Player
+
+Episode ||--o{ Map
+Map ||--o{ Sector
+
+Episode ||--o{ Game
+
+Player ||--o{ GameParticipant
+Game ||--o{ GameParticipant
+
+Game ||--o{ TelemetryEvent
+Player ||--o{ TelemetryEvent
+Sector ||--o{ TelemetryEvent
+
+UXInstrument ||--o{ UXItem
+
+User ||--o{ UXResponse
+UXInstrument ||--o{ UXResponse
+
+UXResponse ||--o{ UXResponseItem
+UXItem ||--o{ UXResponseItem
+
+@enduml
